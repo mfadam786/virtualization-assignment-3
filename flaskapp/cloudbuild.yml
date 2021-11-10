@@ -1,0 +1,40 @@
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  name: "flaskapp"
+  namespace: "default"
+  labels:
+    app: "flaskapp"
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: "flaskapp"
+  template:
+    metadata:
+      labels:
+        app: "flaskapp"
+    spec:
+      containers:
+      - name: "mfadam786-virtualization-assignment-3"
+        image: "gcr.io/usethisone-330202/github_mfadam786_virtualization_assignment_3:$SHORT_SHA"
+---
+apiVersion: "autoscaling/v2beta1"
+kind: "HorizontalPodAutoscaler"
+metadata:
+  name: "flaskapp"
+  namespace: "default"
+  labels:
+    app: "flaskapp"
+spec:
+  scaleTargetRef:
+    kind: "Deployment"
+    name: "flaskapp"
+    apiVersion: "apps/v1"
+  minReplicas: 1
+  maxReplicas: 5
+  metrics:
+  - type: "Resource"
+    resource:
+      name: "cpu"
+      targetAverageUtilization: 80
